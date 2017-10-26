@@ -16,6 +16,7 @@ public class Scene_Manager_Editor : EditorWindow
     public GUIStyle _style01;
     public GUIStyle _style02;
 
+
     public DirectoryInfo dir;
     public FileInfo[] info;
 
@@ -60,27 +61,7 @@ public class Scene_Manager_Editor : EditorWindow
         #endregion
 
 
-        /*
-        EditorGUILayout.Space();
-        //Main Menu
-        EditorGUILayout.BeginHorizontal();
-        GUI.DrawTexture(GUILayoutUtility.GetRect(50, 50), (Texture2D)Resources.Load("Unity Icon"), ScaleMode.ScaleToFit);
-        EditorGUILayout.BeginVertical();
-        SceneNameInspector = "Main Menu";
-        EditorGUILayout.TextArea(SceneNameInspector, _style00);
-        GUI.enabled = true;
-        Rect buttonRect00 = EditorGUILayout.BeginHorizontal("Button");
-        if (GUI.Button(buttonRect00, GUIContent.none))
-        {
-            Main_Scene_Info.ChangeSceneTo_EditorMode(SceneNameInspector);
-        }
-        buttonRect00.height = 10;
-        buttonRect00.width = 50;
-        GUILayout.Label("Change Scene to " + SceneNameInspector, _style01);
-        EditorGUILayout.EndVertical();
-        EditorGUILayout.EndHorizontal();
-        EditorGUILayout.EndHorizontal();
-        */
+
         GetAllScenes();
         CreateScene();
 
@@ -107,24 +88,77 @@ public class Scene_Manager_Editor : EditorWindow
             EditorGUILayout.BeginHorizontal();
             GUI.DrawTexture(GUILayoutUtility.GetRect(50, 50), (Texture2D)Resources.Load("Unity Icon"), ScaleMode.ScaleToFit);
             EditorGUILayout.BeginVertical();
+
+            #region Función para cambiar de escena
             sceneNameInspector = sceneName;
             EditorGUILayout.TextArea(sceneNameInspector, _style00);
             GUI.enabled = true;
             Rect buttonRect00 = EditorGUILayout.BeginHorizontal("Button");
             if (GUI.Button(buttonRect00, GUIContent.none))
             {
+                //Función para cambiar la escena
                 Main_Scene_Info.ChangeSceneTo_EditorMode(sceneNameInspector);
             }
             buttonRect00.height = 10;
             buttonRect00.width = 50;
             GUILayout.Label("Change Scene to " + sceneNameInspector, _style01);
-            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            #endregion
+
+            #region Función para guardar la escena
+            //Solo podes guardar la escena seleccionada si es la que está cargada ahora mismo
+            #region Toggle Save Button
+            if (SceneManager.GetActiveScene().name != Path.GetFileNameWithoutExtension(info[i].Name))
+            {
+                GUI.enabled = false;
+            }
+            #endregion
+
+            Rect saveButton = EditorGUILayout.BeginHorizontal("Button");
+            if (GUI.Button(saveButton, GUIContent.none))
+            {
+                //Funcion para guardar la escena
+                EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+            }
+            GUI.enabled = true;
+
+            saveButton.height = 10;
+            saveButton.width = 50;
+            GUILayout.Label("Save scene", _style01);
+            EditorGUILayout.EndHorizontal();
+            #endregion
+
+            #region Función para borrar la escena
+            Rect deleteButton = EditorGUILayout.BeginHorizontal("Button");
+            if (GUI.Button(deleteButton, GUIContent.none))
+            {
+                AssetDatabase.MoveAssetToTrash("Assets/Scenes/" + Path.GetFileNameWithoutExtension(info[i].Name) + ".unity");
+
+                //Funcion para eliminar la escena
+            }
+
+            deleteButton.height = 10;
+            deleteButton.width = 50;
+            GUILayout.Label("Delete scene", _style01);
+            EditorGUILayout.EndHorizontal();
+            #endregion
+
+            //var locked = false;
+            //locked = EditorGUILayout.Toggle(locked);
+            //if (locked)
+            //{
+            //}
+
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndHorizontal();
+            GUILayoutUtility.GetRect(30, 30);
         }
     }
 
-    void CreateScene()
+    public void CreateScene()
     {
 
         #region Title || Create Scene ||
@@ -183,20 +217,19 @@ public class Scene_Manager_Editor : EditorWindow
             EditorGUILayout.HelpBox("You should put something up here or it won't work (>_<)", MessageType.Warning);
         }
 
-
         EditorGUILayout.EndHorizontal();
 
     }
 
-}
 
-public class Main_Scene_Info : MonoBehaviour
-{
-
-    public static void ChangeSceneTo_EditorMode(string SceneName)
+    public class Main_Scene_Info : MonoBehaviour
     {
-        EditorSceneManager.OpenScene("Assets/Scenes/" + SceneName + ".unity");
-    }
 
+        public static void ChangeSceneTo_EditorMode(string SceneName)
+        {
+            EditorSceneManager.OpenScene("Assets/Scenes/" + SceneName + ".unity");
+        }
+
+    }
 }
 
