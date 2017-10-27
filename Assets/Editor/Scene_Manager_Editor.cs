@@ -20,6 +20,8 @@ public class Scene_Manager_Editor : EditorWindow
     public DirectoryInfo dir;
     public FileInfo[] info;
 
+    public Vector2 scrollPos;
+
     [MenuItem("Custom Windows/Scene Info")]
     static void CreateWindow()
     {
@@ -60,10 +62,12 @@ public class Scene_Manager_Editor : EditorWindow
 
         #endregion
 
-
-
+        
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true); //Begin Scroll
         GetAllScenes();
         CreateScene();
+        Repaint();
+        EditorGUILayout.EndScrollView(); //End Scroll
 
         GUILayoutUtility.GetRect(20, 20);
 
@@ -218,7 +222,6 @@ public class Scene_Manager_Editor : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
-
     }
 
 
