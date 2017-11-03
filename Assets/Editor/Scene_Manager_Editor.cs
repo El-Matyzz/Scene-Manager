@@ -62,7 +62,7 @@ public class Scene_Manager_Editor : EditorWindow
 
         #endregion
 
-        
+
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true); //Begin Scroll
         GetAllScenes();
         CreateScene();
