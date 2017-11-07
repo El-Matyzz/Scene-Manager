@@ -52,29 +52,28 @@ public class Scene_Manager_Editor : EditorWindow
         #endregion
 
 
-        #region Title - || Scene Manager ||
+        #region MainLayout - Do Not Touch || Title || BeginScroll
 
-        EditorGUILayout.BeginVertical();
         EditorGUILayout.Space();
         GUI.enabled = false;
         EditorGUILayout.TextArea("Scene Changer", _style02);
         GUI.enabled = true;
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, true, false); //Begin Scroll
 
         #endregion
 
-
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, false, true); //Begin Scroll
         GetAllScenes();
         CreateScene();
+        OpenBuilder();
         Repaint();
+
+        #region MainLayout - Do Not Touch || Window Fix || EndScroll
         EditorGUILayout.EndScrollView(); //End Scroll
 
         GUILayoutUtility.GetRect(20, 20);
-
-        #region MainLayout - Do Not Touch
-        EditorGUILayout.EndVertical();
         minSize = new Vector2(300, 500);
         maxSize = new Vector2(300, 500);
+
         #endregion
 
     }
@@ -108,30 +107,56 @@ public class Scene_Manager_Editor : EditorWindow
             GUILayout.Label("Change Scene to " + sceneNameInspector, _style01);
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginHorizontal();
             #endregion
+
+            EditorGUILayout.BeginHorizontal();
 
             #region Función para guardar la escena
             //Solo podes guardar la escena seleccionada si es la que está cargada ahora mismo
             #region Toggle Save Button
+
+            //if (SceneManager.GetActiveScene().name != Path.GetFileNameWithoutExtension(info[i].Name))
+            //{
+            //    GUI.enabled = false;
+            //    GUILayout.Button((Texture2D)Resources.Load("Lock"));
+            //    GUI.enabled = true;
+            //}
             if (SceneManager.GetActiveScene().name != Path.GetFileNameWithoutExtension(info[i].Name))
             {
                 GUI.enabled = false;
+                Rect dontSave = EditorGUILayout.BeginHorizontal("Button");
+                if (GUI.Button(dontSave, GUIContent.none))
+                {
+
+                }
+                
+                GUI.DrawTexture(GUILayoutUtility.GetRect(16,16), (Texture2D)Resources.Load("Lock"), ScaleMode.ScaleToFit);
+                GUI.enabled = true;
+
+                dontSave.height = 10;
+                dontSave.width = 50;
+                //GUILayout.Label("Lala", _style01);
+                EditorGUILayout.EndHorizontal();
             }
+            else
+            {
+                Rect saveButton = EditorGUILayout.BeginHorizontal("Button");
+                if (GUI.Button(saveButton, GUIContent.none))
+                {
+                    //Funcion para guardar la escena
+                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+                }
+                GUI.enabled = true;
+
+                saveButton.height = 10;
+                saveButton.width = 50;
+                GUILayout.Label("Save scene", _style01);
+                EditorGUILayout.EndHorizontal();
+            }
+
+
             #endregion
 
-            Rect saveButton = EditorGUILayout.BeginHorizontal("Button");
-            if (GUI.Button(saveButton, GUIContent.none))
-            {
-                //Funcion para guardar la escena
-                EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-            }
-            GUI.enabled = true;
-
-            saveButton.height = 10;
-            saveButton.width = 50;
-            GUILayout.Label("Save scene", _style01);
-            EditorGUILayout.EndHorizontal();
             #endregion
 
             #region Función para borrar la escena
@@ -139,8 +164,6 @@ public class Scene_Manager_Editor : EditorWindow
             if (GUI.Button(deleteButton, GUIContent.none))
             {
                 AssetDatabase.MoveAssetToTrash("Assets/Scenes/" + Path.GetFileNameWithoutExtension(info[i].Name) + ".unity");
-
-                //Funcion para eliminar la escena
             }
 
             deleteButton.height = 10;
@@ -149,14 +172,8 @@ public class Scene_Manager_Editor : EditorWindow
             EditorGUILayout.EndHorizontal();
             #endregion
 
-            //var locked = false;
-            //locked = EditorGUILayout.Toggle(locked);
-            //if (locked)
-            //{
-            //}
-
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
             EditorGUILayout.EndHorizontal();
             GUILayoutUtility.GetRect(30, 30);
         }
@@ -184,6 +201,9 @@ public class Scene_Manager_Editor : EditorWindow
         Rect buttonRect01 = EditorGUILayout.BeginHorizontal("Button");
 
         GUI.enabled = true;
+
+        #region SceneCreator Locker p1
+
         for (int i = 0; i < info.Length; i++)
         {
             if (newSceneName == "" || newSceneName == Path.GetFileNameWithoutExtension(info[i].Name))
@@ -191,6 +211,8 @@ public class Scene_Manager_Editor : EditorWindow
                 GUI.enabled = false;
             }
         }
+
+        #endregion
 
         if (GUI.Button(buttonRect01, GUIContent.none))
         {
@@ -201,12 +223,14 @@ public class Scene_Manager_Editor : EditorWindow
         buttonRect01.width = 50;
         GUI.enabled = true;
         GUILayout.Label("Create new scene as: " + newSceneName, _style01);
+
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.EndHorizontal();
 
+
+        #region SceneCreator Locker p2
         EditorGUILayout.BeginHorizontal();
-        GUILayoutUtility.GetRect(50, 50);
 
         for (int i = 0; i < info.Length; i++)
         {
@@ -222,6 +246,25 @@ public class Scene_Manager_Editor : EditorWindow
         }
 
         EditorGUILayout.EndHorizontal();
+        #endregion
+
+        GUILayoutUtility.GetRect(30, 30);
+
+
+    }
+    public void OpenBuilder()
+    {
+        Rect openBuilder = EditorGUILayout.BeginHorizontal("Button");
+        if (GUI.Button(openBuilder, GUIContent.none))
+        {
+            ((Custom_Build_Settings)GetWindow(typeof(Custom_Build_Settings))).Show();
+        }
+
+        GUILayout.Label("Open Builder Settings ", _style01);
+        openBuilder.height = 10;
+        openBuilder.width = 50;
+        EditorGUILayout.EndHorizontal();
+        GUILayoutUtility.GetRect(30, 30);
     }
 
 

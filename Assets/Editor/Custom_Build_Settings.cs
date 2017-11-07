@@ -17,6 +17,10 @@ public class Custom_Build_Settings : EditorWindow
     public GUIStyle _style01;
     public GUIStyle _style02;
 
+    public Vector2 scrollPos;
+
+    public bool mustShowFolder;
+
     [MenuItem("Custom Windows/Custom Build Settings")]
     static void CreateBuildWindow()
     {
@@ -42,6 +46,7 @@ public class Custom_Build_Settings : EditorWindow
         _style02.fontStyle = FontStyle.Bold;
         _style02.fontSize = 15;
         #endregion
+
 
         GUI.enabled = false;
         EditorGUILayout.TextArea("Custom Build Settings", _style02);
@@ -113,7 +118,7 @@ public class Custom_Build_Settings : EditorWindow
         EditorGUILayout.BeginHorizontal();
         Rect build = EditorGUILayout.BeginHorizontal("Button");
         if (GUI.Button(build, GUIContent.none))
-           Build();
+            Build();
         GUILayout.Label("Build", _style01);
         EditorGUILayout.EndHorizontal();
 
@@ -123,8 +128,13 @@ public class Custom_Build_Settings : EditorWindow
         GUILayout.Label("Build & Run", _style01);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndHorizontal();
+
+
+        PrepareFolder();
+
+        FixWindow();
     }
-    
+
     public void AddScene()
     {
         scenes.Add(sceneToAdd);
@@ -158,6 +168,11 @@ public class Custom_Build_Settings : EditorWindow
         options.options = BuildOptions.None;
 
         BuildPipeline.BuildPlayer(options);
+
+        if (mustShowFolder)
+        {
+            ShowFolder();
+        }
     }
 
     public void BuildAndRun()
@@ -180,6 +195,47 @@ public class Custom_Build_Settings : EditorWindow
         options.options = BuildOptions.AutoRunPlayer;
 
         BuildPipeline.BuildPlayer(options);
+        if (mustShowFolder)
+        {
+            ShowFolder();
+        }
     }
-    
+
+    public void PrepareFolder()
+    {
+        GUILayoutUtility.GetRect(15, 15);
+
+        #region Button & Toggle
+
+        GUI.enabled = true;
+        Rect toggleButton = EditorGUILayout.BeginHorizontal("Button");
+        if (GUI.Button(toggleButton, GUIContent.none))
+        {
+            mustShowFolder = !mustShowFolder;
+        }
+        EditorGUILayout.Space();
+        mustShowFolder = EditorGUILayout.Toggle("Open Folder at Finish", mustShowFolder);
+        EditorGUILayout.EndHorizontal();
+
+        #endregion
+    }
+
+    public void ShowFolder()
+    {
+        //Falta poner la ruta de guardado de los buildeos
+        //Falta poner la ruta de guardado de los buildeos
+        //Falta poner la ruta de guardado de los buildeos
+        System.Diagnostics.Process.Start("RUTA DE GUARDADO DE LOS BUILDEOS");
+        //Falta poner la ruta de guardado de los buildeos
+        //Falta poner la ruta de guardado de los buildeos
+        //Falta poner la ruta de guardado de los buildeos
+    }
+
+    public void FixWindow()
+    {
+        minSize = new Vector2(300, 500);
+        maxSize = new Vector2(300, 500);
+        Repaint();
+    }
+
 }
