@@ -22,6 +22,8 @@ public class Scene_Manager_Editor : EditorWindow
 
     public Vector2 scrollPos;
 
+    public static string pathOfDeletion;
+
     [MenuItem("Custom Windows/Scene Info")]
     static void CreateWindow()
     {
@@ -69,8 +71,8 @@ public class Scene_Manager_Editor : EditorWindow
 
         #region MainLayout - Do Not Touch || Window Fix || EndScroll
         EditorGUILayout.EndScrollView(); //End Scroll
-
         GUILayoutUtility.GetRect(20, 20);
+
         minSize = new Vector2(300, 500);
         maxSize = new Vector2(300, 500);
 
@@ -160,10 +162,15 @@ public class Scene_Manager_Editor : EditorWindow
             #endregion
 
             #region Función para borrar la escena
+
+            
+        //((Custom_Build_Settings)GetWindow(typeof(SecureDeletion))).Show();
+
             Rect deleteButton = EditorGUILayout.BeginHorizontal("Button");
             if (GUI.Button(deleteButton, GUIContent.none))
             {
-                AssetDatabase.MoveAssetToTrash("Assets/Scenes/" + Path.GetFileNameWithoutExtension(info[i].Name) + ".unity");
+                pathOfDeletion = "Assets/Scenes/" + Path.GetFileNameWithoutExtension(info[i].Name) + ".unity";
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Show();
             }
 
             deleteButton.height = 10;
@@ -217,6 +224,7 @@ public class Scene_Manager_Editor : EditorWindow
         if (GUI.Button(buttonRect01, GUIContent.none))
         {
             EditorSceneManager.SaveScene(EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single), "Assets/Scenes/" + newSceneName + ".unity");
+            newSceneName = "";
         }
 
         buttonRect01.height = 10;
@@ -277,5 +285,9 @@ public class Scene_Manager_Editor : EditorWindow
         }
 
     }
+
+
 }
+
+
 
