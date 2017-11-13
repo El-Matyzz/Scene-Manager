@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class SecurityAdvice : EditorWindow
 {
@@ -9,7 +11,7 @@ public class SecurityAdvice : EditorWindow
     public GUIStyle _style00;
     public GUIStyle _style01;
     public GUIStyle _style02;
-    
+
 
     public void OnGUI()
     {
@@ -35,27 +37,98 @@ public class SecurityAdvice : EditorWindow
 
         SecureDeletion();
 
-        minSize = new Vector2(240, 50);
-        maxSize = new Vector2(240, 50);
-       
+        minSize = new Vector2(170, 95);
+        maxSize = new Vector2(170, 95);
+
     }
 
-    
+
     public void SecureDeletion()
     {
-        string path = Scene_Manager_Editor.pathOfDeletion;
-        Rect deleteButton = EditorGUILayout.BeginHorizontal("Button");
-        if (GUI.Button(deleteButton, GUIContent.none))
+        if (Scene_Manager_Editor.toDelete)
         {
-            AssetDatabase.MoveAssetToTrash(path);
+            EditorGUILayout.HelpBox("Are you sure you want to delete this?", MessageType.Info);
 
-            ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            string path = Scene_Manager_Editor.pathOfDeletion;
+            EditorGUILayout.BeginHorizontal();
+            //GUILayoutUtility.GetRect(40, 40);
+            Rect yesButton00 = EditorGUILayout.BeginHorizontal("Button");
+
+            if (GUI.Button(yesButton00, GUIContent.none))
+            {
+                AssetDatabase.MoveAssetToTrash(path);
+
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("Yes", MessageType.Error);
+            EditorGUILayout.EndHorizontal();
+
+            Rect noButton00 = EditorGUILayout.BeginHorizontal("Button");
+
+            if (GUI.Button(noButton00, GUIContent.none))
+            {
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("No", MessageType.Warning);
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
         }
+        else if (Scene_Manager_Editor.toSave)
+        {
+            EditorGUILayout.HelpBox("Are you sure you want to overwrite the scene?", MessageType.Info);
 
-        deleteButton.height = 10;
-        deleteButton.width = 50;
-        EditorGUILayout.HelpBox("Are you sure you want to delete this?", MessageType.Error);
+            EditorGUILayout.BeginHorizontal();
+            Rect yesButton01 = EditorGUILayout.BeginHorizontal("Button");
 
-        EditorGUILayout.EndHorizontal();
+            if (GUI.Button(yesButton01, GUIContent.none))
+            {
+                EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("Yes", MessageType.Error);
+            EditorGUILayout.EndHorizontal();
+
+            Rect noButton01 = EditorGUILayout.BeginHorizontal("Button");
+
+            if (GUI.Button(noButton01, GUIContent.none))
+            {
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("No", MessageType.Warning);
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+
+        }
+        else if (Scene_Manager_Editor.toChange)
+        {
+            EditorGUILayout.HelpBox("Are you sure you want to change the scene without saving?", MessageType.Info);
+
+            EditorGUILayout.BeginHorizontal();
+            Rect yesButton02 = EditorGUILayout.BeginHorizontal("Button");
+
+            if (GUI.Button(yesButton02, GUIContent.none))
+            {
+                EditorSceneManager.OpenScene(Scene_Manager_Editor.pathOfChange);
+
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("Yes", MessageType.Error);
+            EditorGUILayout.EndHorizontal();
+
+            Rect noButton02 = EditorGUILayout.BeginHorizontal("Button");
+
+            if (GUI.Button(noButton02, GUIContent.none))
+            {
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
+            }
+            EditorGUILayout.HelpBox("No", MessageType.Warning);
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
+
+        }
     }
 }

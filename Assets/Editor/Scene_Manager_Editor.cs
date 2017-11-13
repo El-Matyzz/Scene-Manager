@@ -23,6 +23,12 @@ public class Scene_Manager_Editor : EditorWindow
     public Vector2 scrollPos;
 
     public static string pathOfDeletion;
+    public static bool toDelete;
+    public static string pathOfSaving;
+    public static bool toSave;
+    public static string pathOfChange;
+    public static bool toChange;
+
 
     [MenuItem("Custom Windows/Scene Info")]
     static void CreateWindow()
@@ -67,7 +73,6 @@ public class Scene_Manager_Editor : EditorWindow
         GetAllScenes();
         CreateScene();
         OpenBuilder();
-        Repaint();
 
         #region MainLayout - Do Not Touch || Window Fix || EndScroll
         EditorGUILayout.EndScrollView(); //End Scroll
@@ -101,8 +106,19 @@ public class Scene_Manager_Editor : EditorWindow
             Rect buttonRect00 = EditorGUILayout.BeginHorizontal("Button");
             if (GUI.Button(buttonRect00, GUIContent.none))
             {
-                //Función para cambiar la escena
-                Main_Scene_Info.ChangeSceneTo_EditorMode(sceneNameInspector);
+                if (SceneManager.GetActiveScene().isDirty)
+                {
+                toSave = false;
+                toDelete = false;
+                toChange = true;
+                pathOfChange = "Assets/Scenes/" + sceneNameInspector + ".unity";
+                ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Show();
+                }
+                else
+                {
+                    pathOfChange = "Assets/Scenes/" + sceneNameInspector + ".unity";
+                    EditorSceneManager.OpenScene(pathOfChange);
+                }
             }
             buttonRect00.height = 10;
             buttonRect00.width = 50;
@@ -115,14 +131,7 @@ public class Scene_Manager_Editor : EditorWindow
 
             #region Función para guardar la escena
             //Solo podes guardar la escena seleccionada si es la que está cargada ahora mismo
-            #region Toggle Save Button
 
-            //if (SceneManager.GetActiveScene().name != Path.GetFileNameWithoutExtension(info[i].Name))
-            //{
-            //    GUI.enabled = false;
-            //    GUILayout.Button((Texture2D)Resources.Load("Lock"));
-            //    GUI.enabled = true;
-            //}
             if (SceneManager.GetActiveScene().name != Path.GetFileNameWithoutExtension(info[i].Name))
             {
                 GUI.enabled = false;
@@ -145,8 +154,10 @@ public class Scene_Manager_Editor : EditorWindow
                 Rect saveButton = EditorGUILayout.BeginHorizontal("Button");
                 if (GUI.Button(saveButton, GUIContent.none))
                 {
-                    //Funcion para guardar la escena
-                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+                    toChange = false;
+                    toDelete = false;
+                    toSave = true;
+                    ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Show();
                 }
                 GUI.enabled = true;
 
@@ -155,9 +166,6 @@ public class Scene_Manager_Editor : EditorWindow
                 GUILayout.Label("Save scene", _style01);
                 EditorGUILayout.EndHorizontal();
             }
-
-
-            #endregion
 
             #endregion
 
@@ -169,6 +177,9 @@ public class Scene_Manager_Editor : EditorWindow
             Rect deleteButton = EditorGUILayout.BeginHorizontal("Button");
             if (GUI.Button(deleteButton, GUIContent.none))
             {
+                toChange = false;
+                toSave = false;
+                toDelete = true;
                 pathOfDeletion = "Assets/Scenes/" + Path.GetFileNameWithoutExtension(info[i].Name) + ".unity";
                 ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Show();
             }
@@ -281,7 +292,7 @@ public class Scene_Manager_Editor : EditorWindow
 
         public static void ChangeSceneTo_EditorMode(string SceneName)
         {
-            EditorSceneManager.OpenScene("Assets/Scenes/" + SceneName + ".unity");
+            
         }
 
     }

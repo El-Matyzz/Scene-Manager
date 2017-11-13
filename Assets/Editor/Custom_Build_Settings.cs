@@ -225,7 +225,7 @@ public class Custom_Build_Settings : EditorWindow
         //Falta poner la ruta de guardado de los buildeos
         //Falta poner la ruta de guardado de los buildeos
         //Falta poner la ruta de guardado de los buildeos
-        System.Diagnostics.Process.Start("RUTA DE GUARDADO DE LOS BUILDEOS");
+        System.Diagnostics.Process.Start("C:\\oraclexe\\app");
         //Falta poner la ruta de guardado de los buildeos
         //Falta poner la ruta de guardado de los buildeos
         //Falta poner la ruta de guardado de los buildeos
