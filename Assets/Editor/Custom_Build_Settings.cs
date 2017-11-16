@@ -47,10 +47,11 @@ public class Custom_Build_Settings : EditorWindow
         _style02.fontSize = 15;
         #endregion
 
-
         GUI.enabled = false;
         EditorGUILayout.TextArea("Custom Build Settings", _style02);
         GUI.enabled = true;
+
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, true, false); //Begin Scroll
 
         for (int i = 0; i < scenes.Count; i++)
         {
@@ -133,6 +134,7 @@ public class Custom_Build_Settings : EditorWindow
         PrepareFolder();
 
         FixWindow();
+        EditorGUILayout.EndScrollView();
     }
 
     public void AddScene()

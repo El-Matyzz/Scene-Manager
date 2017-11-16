@@ -49,20 +49,20 @@ public class SecurityAdvice : EditorWindow
         {
             EditorGUILayout.HelpBox("Are you sure you want to delete this?", MessageType.Info);
 
-            string path = Scene_Manager_Editor.pathOfDeletion;
             EditorGUILayout.BeginHorizontal();
-            //GUILayoutUtility.GetRect(40, 40);
-            Rect yesButton00 = EditorGUILayout.BeginHorizontal("Button");
 
+            #region Deletion YesButton
+            Rect yesButton00 = EditorGUILayout.BeginHorizontal("Button");
             if (GUI.Button(yesButton00, GUIContent.none))
             {
-                AssetDatabase.MoveAssetToTrash(path);
+                AssetDatabase.MoveAssetToTrash(Scene_Manager_Editor.pathOfDeletion);
 
                 ((SecurityAdvice)GetWindow(typeof(SecurityAdvice))).Close();
             }
             EditorGUILayout.HelpBox("Yes", MessageType.Error);
             EditorGUILayout.EndHorizontal();
-
+            #endregion
+            #region Deletion NoButton
             Rect noButton00 = EditorGUILayout.BeginHorizontal("Button");
 
             if (GUI.Button(noButton00, GUIContent.none))
@@ -72,13 +72,16 @@ public class SecurityAdvice : EditorWindow
             EditorGUILayout.HelpBox("No", MessageType.Warning);
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
+            #endregion
         }
         else if (Scene_Manager_Editor.toSave)
         {
             EditorGUILayout.HelpBox("Are you sure you want to overwrite the scene?", MessageType.Info);
 
             EditorGUILayout.BeginHorizontal();
+
+            #region Save YesButton
             Rect yesButton01 = EditorGUILayout.BeginHorizontal("Button");
 
             if (GUI.Button(yesButton01, GUIContent.none))
@@ -89,7 +92,8 @@ public class SecurityAdvice : EditorWindow
             }
             EditorGUILayout.HelpBox("Yes", MessageType.Error);
             EditorGUILayout.EndHorizontal();
-
+            #endregion
+            #region Save NoButton
             Rect noButton01 = EditorGUILayout.BeginHorizontal("Button");
 
             if (GUI.Button(noButton01, GUIContent.none))
@@ -99,14 +103,16 @@ public class SecurityAdvice : EditorWindow
             EditorGUILayout.HelpBox("No", MessageType.Warning);
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-
+            EditorGUILayout.EndHorizontal();
+            #endregion
         }
         else if (Scene_Manager_Editor.toChange)
         {
             EditorGUILayout.HelpBox("Are you sure you want to change the scene without saving?", MessageType.Info);
 
             EditorGUILayout.BeginHorizontal();
+
+            #region Change YesButton
             Rect yesButton02 = EditorGUILayout.BeginHorizontal("Button");
 
             if (GUI.Button(yesButton02, GUIContent.none))
@@ -117,7 +123,8 @@ public class SecurityAdvice : EditorWindow
             }
             EditorGUILayout.HelpBox("Yes", MessageType.Error);
             EditorGUILayout.EndHorizontal();
-
+            #endregion
+            #region Change NoButton
             Rect noButton02 = EditorGUILayout.BeginHorizontal("Button");
 
             if (GUI.Button(noButton02, GUIContent.none))
@@ -127,8 +134,8 @@ public class SecurityAdvice : EditorWindow
             EditorGUILayout.HelpBox("No", MessageType.Warning);
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-
+            EditorGUILayout.EndHorizontal();
+            #endregion
         }
     }
 }
