@@ -21,6 +21,9 @@ public class Custom_Build_Settings : EditorWindow
 
     public bool mustShowFolder;
 
+    public bool buildRun = false;
+    public bool folderNotEmpty = false;
+
     [MenuItem("Custom Windows/Custom Build Settings")]
     static void CreateBuildWindow()
     {
@@ -119,17 +122,62 @@ public class Custom_Build_Settings : EditorWindow
         EditorGUILayout.BeginHorizontal();
         Rect build = EditorGUILayout.BeginHorizontal("Button");
         if (GUI.Button(build, GUIContent.none))
-            Build();
+            if (Directory.Exists("PC_Build/"))
+                if (new List<FileInfo>(new DirectoryInfo("PC_Build/").GetFiles("*.exe")).Count == 0)
+                    Build();
+                else
+                {
+                    buildRun = false;
+                    folderNotEmpty = true;
+                }
+            else
+                Build();
         GUILayout.Label("Build", _style01);
         EditorGUILayout.EndHorizontal();
 
         Rect buildAndRun = EditorGUILayout.BeginHorizontal("Button");
         if (GUI.Button(buildAndRun, GUIContent.none))
-            BuildAndRun();
+            if (Directory.Exists("PC_Build/"))
+                if (new List<FileInfo>(new DirectoryInfo("PC_Build/").GetFiles("*.exe")).Count == 0)
+                    BuildAndRun();
+                else
+                {
+                    buildRun = true;
+                    folderNotEmpty = true;
+                }
+            else
+                BuildAndRun();
         GUILayout.Label("Build & Run", _style01);
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndHorizontal();
 
+        if (folderNotEmpty)
+        {
+            EditorGUILayout.HelpBox("There already is a build inside the build folder. Are you sure you want to overwrite it?", MessageType.Warning);
+            EditorGUILayout.BeginHorizontal();
+            Rect yes = EditorGUILayout.BeginHorizontal("Button");
+            if (GUI.Button(yes, GUIContent.none))
+            {
+                if (buildRun)
+                    BuildAndRun();
+                else
+                    Build();
+                folderNotEmpty = false;
+            }
+            yes.width = 20;
+            GUILayout.Label("Yes", _style01);
+            EditorGUILayout.EndHorizontal();
+
+            Rect no = EditorGUILayout.BeginHorizontal("Button");
+            if (GUI.Button(no, GUIContent.none))
+            {
+                folderNotEmpty = false;
+            }
+            no.width = 20;
+            GUILayout.Label("No", _style01);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndHorizontal();
+        }
 
         PrepareFolder();
 
@@ -160,21 +208,19 @@ public class Custom_Build_Settings : EditorWindow
                 max = sceneIncluded[i];
         }
 
-        string[] levels = new string[max];
+        string[] levels = new string[max + 1];
         for (int i = 0; i < max; i++)
             levels[i] = "Assets/Scenes/" + Path.GetFileName(info[i].Name);
         options.scenes = levels;
 
         options.locationPathName = "PC_Build/" + PlayerSettings.productName + ".exe";
         options.target = BuildTarget.StandaloneWindows64;
-        options.options = BuildOptions.None;
+        if (mustShowFolder)
+            options.options = BuildOptions.ShowBuiltPlayer;
+        else
+            options.options = BuildOptions.None;
 
         BuildPipeline.BuildPlayer(options);
-
-        if (mustShowFolder)
-        {
-            ShowFolder();
-        }
     }
 
     public void BuildAndRun()
@@ -187,20 +233,17 @@ public class Custom_Build_Settings : EditorWindow
                 max = sceneIncluded[i];
         }
 
-        string[] levels = new string[max];
+        string[] levels = new string[max + 1];
         for (int i = 0; i < max; i++)
             levels[i] = "Assets/Scenes/" + Path.GetFileName(info[i].Name);
         options.scenes = levels;
 
         options.locationPathName = "PC_Build/" + PlayerSettings.productName + ".exe";
+
         options.target = BuildTarget.StandaloneWindows64;
         options.options = BuildOptions.AutoRunPlayer;
 
         BuildPipeline.BuildPlayer(options);
-        if (mustShowFolder)
-        {
-            ShowFolder();
-        }
     }
 
     public void PrepareFolder()
@@ -220,17 +263,6 @@ public class Custom_Build_Settings : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         #endregion
-    }
-
-    public void ShowFolder()
-    {
-        //Falta poner la ruta de guardado de los buildeos
-        //Falta poner la ruta de guardado de los buildeos
-        //Falta poner la ruta de guardado de los buildeos
-        System.Diagnostics.Process.Start("C:\\oraclexe\\app");
-        //Falta poner la ruta de guardado de los buildeos
-        //Falta poner la ruta de guardado de los buildeos
-        //Falta poner la ruta de guardado de los buildeos
     }
 
     public void FixWindow()
